@@ -1,5 +1,19 @@
 # Project status
 
+## Stage 02.1 completed — attribution and discrete-interface diagnostics, 2026-10-17
+
+The explicitly authorized Stage 02.1 is complete. [Chinese diagnostic report](reports/02_1_reconstruction_diagnostics.md) distinguishes executed checks, source facts and physical unknowns. **Stage 03 remains NOT READY; no labels, neural training or controller changes were performed.**
+
+- Reused Stage02 observations and all 18 final main-grid results, plus existing sensitivity evidence; no raw-log re-audit, model-performance access or full parameter scan. Stage02's 717 delivery files remain hash-identical.
+- Exact native time/value/mask/valid, calibration and whitening checks passed for 22 result sets. Requeried 9,602 native baseline IMU predictions against the original factor: maximum difference <7.09e-10. No evaluation software error explaining the large held-out acceleration residual was found. Hardware timing/calibration remain distinct unknowns.
+- A/B baseline held-out acceleration 12.389/13.007 m/s² exceeds training-only linear interpolation 8.337/8.458. Weakening the prior reduces fitted error but increases held-out error: concrete current-configuration overfitting evidence. Trimming the largest 5% still leaves 11.310/12.144; no isolated second or knot boundary dominates. Remaining local unpredictability is not proven sensor noise.
+- Exactly four predeclared A/B mask solves converged. Shifting accel holdout by two rows yields 12.518/13.141; 200 ms block holdout yields 12.043/23.626. B's block failure and changing estimated bias are retained. Masks remain conditional on original gyro/GNSS and initialization; no independent validation claim or parameter promotion.
+- Full-native spectra/phase diagnostics confirm sensor-point fundamental retention and prior-sensitive harmonics; sparse ~20 Hz holdout spectra were not used to certify ~12 Hz dynamics. Phase coherence does not distinguish whole-body motion from mounting vibration.
+- Nine saved-curve replays plus constant/4 Hz analytic controls separate numerical approximation from reconstruction uncertainty. At 0.2 s, original 20 ms replay A/B velocity RMS is 0.266/0.320 m/s and rate RMS 0.370/0.443 rad/s. Smaller steps/RK4 improve replay. Two additionally preregistered off-grid replays expose optimistic knot-aligned quadrature; no uniform fourth-order accuracy claim.
+- Separate interval velocity change, position moment, rate change and SO(3) increment resolve endpoint arithmetic, but that identity is not physical accuracy. No final training format was chosen and no dynamics source was modified. New outputs: `runs/stage02_1_20261017/`; code/commands: `experiments/stage02_1/README.md`; six grouped focused checks passed.
+
+**Experimental export is conditional and limited to research/interface use with reference-point, timing, sensitivity and validity metadata; a/alpha are unvalidated candidates, not whole-body truth.** Formal production still requires timing/extrinsic/rigid-mounting evidence, a frozen observation/dynamic-retention acceptance protocol, appropriate uncertainty/validity and an explicitly matched continuous-to-discrete interface. Existing A/B are development-exposed. No Stage03 work is authorized by this status entry.
+
 ## Stage 02 completed — experimental reconstruction; Stage 03 not ready, 2026-10-17
 
 The user explicitly authorized Stage 02. [Real-observation reconstruction report](reports/02_trajectory_reconstruction.md) records executed results and limitations. **No Stage 03, formal labels, neural training or controller changes were performed.**

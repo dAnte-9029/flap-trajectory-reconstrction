@@ -1,0 +1,32 @@
+{
+  "stage": "02.1",
+  "source_root": "runs/stage02_20261017",
+  "output_root": "runs/stage02_1_20261017",
+  "frozen_before_new_results": true,
+  "scope": "Reuse Stage02 observations and trajectories; no raw re-audit or upstream modification. All new solves conditional on original gyro/GNSS masks and initialization.",
+  "initial_diagnostics": ["input SHA and exact native time/mask/value join", "raw-column calibration replay", "saved query versus GPIMUFactor prediction", "axis/time/phase/knot-distance SSE and concentration", "native-time linear/PCHIP interpolation baselines", "all-native residual spectra and phase regression with sampling caveats"],
+  "residual_frequency_bands_hz": [[0,2],[2,6],[6,10],[10,16],[16,30],[30,45]],
+  "spectral_rule": "Only full native ~100 Hz sequences are regridded at 100 Hz for descriptive Welch (4 s windows). Masked or ~20 Hz held-out spectra cannot establish 12 Hz dynamics. Known-wing-phase regression on subsets is a conditional parametric association, not an unaliased spectrum.",
+  "time_bin_s": 1.0,
+  "phase_bins": 12,
+  "knot_fraction_bins": 10,
+  "interpolation_baselines": ["linear", "pchip"],
+  "new_solve_trigger": "Only if native alignment/factor audit passes and existing results cannot identify holdout-placement and missing-block effects.",
+  "new_solve_budget": 4,
+  "new_solves": [
+    {"segment":"A","mask":"shift_plus2","dt_s":0.02,"q_multiplier":1},
+    {"segment":"B","mask":"shift_plus2","dt_s":0.02,"q_multiplier":1},
+    {"segment":"A","mask":"block200ms_each_second","dt_s":0.02,"q_multiplier":1},
+    {"segment":"B","mask":"block200ms_each_second","dt_s":0.02,"q_multiplier":1}
+  ],
+  "shift_rule": "Accel holdout boolean circularly shifted by +2 native rows in fixed 2000-row context; 20 percent remains held out. Original gyro/GNSS masks unchanged.",
+  "block_rule": "Accel only: (t-target_start) mod 1s in [0.4,0.6). Replace old accel holdout. Gyro/GNSS masks unchanged. Approximately 20 percent time withheld, different difficulty from isolated samples.",
+  "solver_iterations": 400,
+  "no_hyperparameter_search": true,
+  "integration_run_selection": "A/B: existing 20ms q0.1/1/10 and 50ms q1; C: existing 20ms q1 only",
+  "integration_steps_s": [0.02,0.01,0.005,0.0025,0.00125],
+  "integration_horizons_s": [0.02,0.1,0.2,0.5,2.0],
+  "integration_start_stride_s": 0.37,
+  "integration_schemes": ["original coupled body-left derivative", "coupled RK4 with query at substages", "interval endpoint increments and SO3 logarithm", "constant derivatives analytic control", "analytic 4Hz fixed-axis control"],
+  "interpretation": "Arithmetic replay agreement is not physical truth; effective interval increments do not simultaneously define instantaneous acceleration and position/attitude moments. No labels or model training are produced."
+}

@@ -1,0 +1,11 @@
+{
+  "stage": "02.1",
+  "reason": "Initial fixed .1+N*.37 replay starts align to 10ms. Verify convergence is not dependent on knot-aligned quadrature.",
+  "frozen_before_offgrid_results": true,
+  "runs": ["A_full_dt20_q1", "B_full_dt20_q1"],
+  "start_offset_s": 0.1037,
+  "stride_s": 0.37,
+  "steps_s": [0.02, 0.01, 0.005, 0.0025, 0.00125],
+  "horizons_s": [0.02, 0.1, 0.2, 0.5, 2.0],
+  "metrics": "same four-state RMS/max and refinement as original replay; no optimization or parameter selection"
+}
