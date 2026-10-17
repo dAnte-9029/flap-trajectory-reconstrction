@@ -1,0 +1,55 @@
+{
+  "stage": "02.2",
+  "source_root": "runs/stage02_20261017",
+  "output_root": "runs/stage02_2_20261017",
+  "segments": [
+    "A",
+    "B"
+  ],
+  "raw_read_scope": "Only wing_phase, encoder_count, hall_event, flap_frequency in existing A/B target plus 2s context; no IMU re-extraction or September audit",
+  "phase_gap_limit_s": 0.03,
+  "cycle_definition": "No hall_event recorded in A/B. Use positive-going 2pi crossings of unwrapped valid phase, interpolate crossing timestamps; labels are encoder/Hall-referenced phase cycles, NOT directly observed Hall events.",
+  "splits": [
+    "complete_cycle_mod5_eq2",
+    "last8_complete_cycles_forecast"
+  ],
+  "harmonics": [
+    1,
+    2,
+    3
+  ],
+  "primary_harmonics": 3,
+  "local_training_cycles": 8,
+  "phase_mean_bins": 24,
+  "models": [
+    "global_mean_trend",
+    "native_linear_interpolation",
+    "phase_bin_mean",
+    "fourier_global_h1_h2_h3",
+    "fourier_local_affine_h1_h2_h3",
+    "fixed_frequency_local_affine_h3",
+    "cycle_scrambled_phase_local_affine_h3"
+  ],
+  "random_seed": 22017,
+  "weights": "Equal total weight per training cycle; least squares with rank/condition recorded. No empirical noise precision claim.",
+  "phase_control": "Same local basis dimension; replace measured phase by constant-rate clock phase or deterministic independent random offset per cycle. A global phase offset is not a valid negative control.",
+  "evaluation": "Native-time held complete cycles; axis/vector RMSE, training-mean-normalized explained SSE, per-cycle harmonic amplitudes/phases, first/second half, fixed frequency bands [0,4,5,inf], slow gyro-mean norm <0.3 versus >=0.3 rad/s; all strata descriptive",
+  "no_leakage": "IMU held cycles excluded from every coefficient/mean/bin fit; measured wing phase allowed as exogenous input. No phase refit from held IMU. Sparse Stage02 holdouts are not comparable independent scores.",
+  "stage_gate": "Proceed to phase-motion/measurement-model synthetic checks when held-cycle repeated structure improves over no-phase baseline and phase controls in both A/B on predeclared dominant accel-z and gyro-y. Report failures on other axes. No real joint phase allocation without evidence restricting motion versus nuisance ambiguity.",
+  "synthetic_checks": [
+    "finite Fourier kernel primal/dual equivalence",
+    "variable phase and amplitude chain-rule p/v/a",
+    "noncommuting SO3 slow-plus-periodic derivatives",
+    "independent numerical integration and knot boundaries",
+    "motion-versus-observation periodic ambiguity at 5Hz GNSS"
+  ],
+  "synthetic_tolerances": {
+    "kernel_max_abs": 1e-09,
+    "linear_fd_max_abs": 0.0001,
+    "rotation_fd_max_abs": 0.0001,
+    "integration_end_norm": 1e-06
+  },
+  "maximum_new_gptr_solves": 0,
+  "scientific_boundary": "Regression is a sensor decomposition, not a reconstructed rigid-body trajectory. Synthetic checks do not establish actual phase C2 differentiability or physical allocation. No formal labels, no neural training, no Stage03.",
+  "phase_plan_amendment": "Before regression outcomes: targeted extraction found no hall_event. Preserve original frozen_config.json; this revision specifies logged-phase crossing proxy and requires reporting Hall-event uncertainty."
+}
