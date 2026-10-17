@@ -1,6 +1,10 @@
 # Method selection record
 
-## Present candidate order (conditional, not final)
+## Stage 00 evidence update (2026-10-17)
+
+The all-September raw audit parsed 91 unique ULogs; 90 have GNSS PVT and all 91 have main logged accel/gyro near 100 Hz. Logged delta integration covers only about 1% of elapsed time. GPTR remains the conditional first prototype choice for direct measurements and explicit SO(3)/R3 derivatives. gnssFGO loose coupling remains a conditional alternative and GNSS-factor reference; its Full WNOJ implementation does have acceleration states. Neither has been built or optimized here. See [observation audit](reports/00_observation_audit.md) and [paper/code comparison](reports/00_method_applicability.md).
+
+## Candidate order (conditional; no reconstruction accuracy established)
 
 1. **GPTR** (third-order continuous-time WNOJ, SO(3) / R3): best mathematical alignment with coherent acceleration/angular acceleration labels and asynchronously timed observations. Requires GNSS/ULog factor adaptation. The repository has Ceres/ROS sample pipelines; reuse its actual GP core.
 2. **gnssFGO** (continuous-time GP factor graph, GNSS/multisensor system): strongest reference for loose-coupled GNSS observation handling; extensive ROS 2 and adapted-GTSAM dependencies; designed as online localization, not a ready offline label exporter.
@@ -12,7 +16,7 @@
 
 Before implementation, the current stage's report must answer:
 
-- What exact usable observation sources exist for p, v, R, omega, a / alpha in the DEVELOPMENT flights? Which are independent and which are fused/correlated?
+- What exact usable observation sources exist for p, v, R, omega, a / alpha in all September raw ULogs authorized for Stage 00 (historical splits retained only as annotations)? Which are independent and which are fused/correlated?
 - Are measurement-time stamps, uncertainty or outlier indicators available?
 - Is reliable IMU preintegration supported by actual increment data, not nominal sensor configuration?
 - Does candidate code represent translational and rotational derivatives on the correct Lie group? What is its interpolation/discretization error and GP prior's effect on 3–10 Hz motions?

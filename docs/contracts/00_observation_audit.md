@@ -1,15 +1,15 @@
 # Stage 00: observation feasibility audit
 
-**State: drafted, pending explicit user instruction.** Once authorized, this is a read-only inspection and reporting stage.
+**State: completed on 2026-10-17 for all September 2026 raw ULogs (91 unique SHA contents).** Evidence: `docs/reports/00_observation_audit.md` and `runs/stage00_20261017/delivery_manifest.json`. This read-only source inspection and reporting stage does not authorize Stage 01.
 
 ## Question
 
-Do the **actual** 9/6–9/19 ULogs provide enough independent, timestamped observations to estimate p/v/R/omega and useful a/alpha labels without mislabeling unobservable high-frequency motion?
+Do the **actual** September 2026 ULogs provide enough independent, timestamped observations to estimate p/v/R/omega and useful a/alpha labels without mislabeling unobservable high-frequency motion?
 
 ## Inputs and boundaries
 
 - Resolve source paths from local config; verify every raw file is actual ULog, not a Git LFS pointer. Confirm and record source SHA.
-- Discover currently authoritative approved flight list/splits in the modeling repo; preserve them unchanged. Audit DEVELOPMENT flights by default. The user must explicitly authorize opening additional reserved flights.
+- Discover all September 2026 raw ULogs recursively in QgcLogs, including alternate directory names and previously excluded flights. Deduplicate by file SHA; do not filter using model datasets or splits. The user explicitly authorizes read-only observation auditing of historical test logs. Preserve historical roles and exposure metadata as identity annotations only; never read model test performance or use it for method/parameter selection.
 - Reuse existing audit code where practical, read-only, with source attribution. Do not copy unrelated training pipelines.
 - No label regeneration, optimization, neural-network training, method installation, or test-performance checking.
 

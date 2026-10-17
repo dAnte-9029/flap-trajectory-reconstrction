@@ -1,0 +1,15 @@
+{
+  "ulog_root": "/home/zn/QgcLogs",
+  "year": 2026,
+  "month": 9,
+  "output": "runs/stage00_20261017/audit_final",
+  "historical_identity_csv": "/home/zn/flap-system-identification/docs/analysis/results/september_data_sufficiency_v1/inventory.csv",
+  "gap_median_multipliers": [
+    2,
+    3,
+    5
+  ],
+  "spectral_window_seconds": 8,
+  "spectral_note": "Descriptive airborne phase/sensor spectra only; no optimizer, noise tuning or model outcomes.",
+  "scope": "All raw September ULogs, SHA deduplicated. Historical roles annotate only. All logs exposed for observations; no model performance read."
+}

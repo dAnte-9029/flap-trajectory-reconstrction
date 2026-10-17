@@ -23,7 +23,7 @@ All metrics must use fixed, fully specified input segments; report flight-wise d
 
 ## V4 Leakage/reproducibility
 
-- Freeze all method choice and weights based on TRAIN (and pre-authorized DEVELOPMENT calibration); do not tune on reserved test flights.
+- Stage 00 may compare observation compatibility and trajectory representations using the explicitly authorized all-September raw inventory. This does not authorize parameter fitting on reserved flights. Freeze reconstruction weights and tuned hyperparameters using TRAIN (and pre-authorized DEVELOPMENT calibration); never use reserved model performance for method choice or tuning.
 - Offline reconstruction can be acausal; all later model histories, initial conditions and feature extraction must remain causal. Distinguish `offline_label` from `online_available_state` in exports.
 - Each run gets a unique immutable `runs/<run_id>/manifest.json` with hashes, source commits, dataset split, topic choices, covariance/prior, sampled times, output schema and tests.
 
