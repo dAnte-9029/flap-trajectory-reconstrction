@@ -1,8 +1,24 @@
 # Project status
 
+## Stage 02 completed — experimental reconstruction; Stage 03 not ready, 2026-10-17
+
+The user explicitly authorized Stage 02. [Real-observation reconstruction report](reports/02_trajectory_reconstruction.md) records executed results and limitations. **No Stage 03, formal labels, neural training or controller changes were performed.**
+
+- Reused Stage 00/01 evidence and fixed historical-train A/B/C SHA/HRT intervals. Adapted only these three raw ULogs, with 2 s context around each 16 s target; no full September audit or model-performance access.
+- Implemented device-matched calibration, board/level rotation, native asynchronous IMU times, fixed-NED GNSS PVT/covariance/time/lever-arm handling, explicit validity/gap/reset checks and deterministic 20% observation holdout. EKF attitude is initialization only; no correlated EKF observation factors or imported biases.
+- Built the pinned GPTR core with Stage 01 query/manifold/Jacobian/PSI adapters, plus a local Ceres PVT factor. **11 PVT synthetic checks, 6 independent geometry/calibration checks, CTest 1/1 passed.** Original raw files and upstream forks remain unchanged.
+- Executed A short first, then 18 fixed 20/50 ms and decade-prior runs plus 12 delay/lever/initial-yaw sensitivities. Ten original 80-iteration runs exhausted their budget; identical-configuration 400-iteration reruns are separately preserved. **41 solves total, 31 final configurations converged.** This is numerical convergence, not physical acceptance.
+- Exported experimental continuous p/v/a/R/omega/alpha, knots, native residuals, quality flags, independent derivative/integration checks, wing-phase harmonics/PSD/peaks and sensitivity envelopes. All large outputs remain local in `runs/stage02_20261017/`; final index is `delivery_manifest.json`.
+- Baseline 20 ms held-out vector RMSE A/B/C: accel **12.389/13.007/15.546 m/s²** despite fitted RMSE near 0.1; gyro **0.247/0.262/0.634 rad/s**. GNSS held-out position **0.058/0.056/0.718 m**, velocity **0.494/0.321/0.732 m/s**. A/B windows are all fix 6; C all fix 4. These correlated holdouts are not independent truth.
+- Main gyro-y wing fundamental gain is approximately 0.997/1.000/0.999, but stronger prior reduces its third harmonic to 0.439/0.408/0.273. Acceleration holdout versus harmonic retention is unresolved; no setting was promoted by lowest residual alone.
+- Interior derivative checks and midpoint step refinement support numerical consistency at tested scales. Small-angle approximation remains: real local Jacobian errors reach ~7.51e-4; some B alpha knot limits retain ~1e-5–1e-4 rad/s² jumps. No new upstream derivative patch was made. Existing downstream 20 ms left-derivative integration has substantial discretization error even with exact reconstructed derivatives.
+- GNSS delay, lever arms, rigid mounting versus structural vibration, instantaneous versus interval labels and calibrated uncertainty remain unresolved. Changing assumed delay by 110 ms shifts estimated position by ~0.68–1.14 m RMS and can alter attitude/acceleration materially. Saved envelopes are sensitivity diagnostics, not confidence intervals.
+
+**Stage 03 decision: NOT READY for formal label production.** Before separate authorization, establish timing/extrinsic/reference-point evidence or restrict the label claim; resolve acceleration holdout and observed-harmonic tradeoffs; freeze validity/uncertainty and the continuous-to-discrete interface. GPTR remains an engineering-feasible prototype, not validated rigid-body ground truth. Reproduction: `experiments/stage02/README.md`; configuration: `configs/stage02_reconstruction.json`.
+
 ## Stage 01 completed — synthetic feasibility with limits, 2026-10-17
 
-The user explicitly authorized Stage 01 and chose the `flap-recon` Conda environment. Its interrupted download was recovered and the core build/numerical work completed. [Method feasibility report](reports/01_method_feasibility.md) separates executed results, source analysis and scientific limitations. **Stage 02 is not authorized or executed.**
+The user explicitly authorized Stage 01 and chose the `flap-recon` Conda environment. Its interrupted download was recovered and the core build/numerical work completed. [Method feasibility report](reports/01_method_feasibility.md) separates executed results, source analysis and scientific limitations. **At Stage 01 closure, Stage 02 was not authorized or executed; its subsequent authorization and results are recorded above.**
 
 - Reused both Stage 00 reports and existing final audit CSVs. No raw ULogs or model performance were read, and no September statistics were rerun.
 - Rechecked GPTR `2c0285a4f3141b131cc7b3aa77b3c6d979c0a2c2` and gnssFGO `16030fb6a24263a4b927d2ec5d1da266340ddb9b`, with upstream worktrees unchanged.
@@ -67,3 +83,4 @@ At Stage 00 closure, Stage 01 was not authorized or started. Its subsequently au
 |---|---|---|---|---|
 | 2026-10-17 | 00 | All 91 unique September ULogs audited from raw bytes | Reports above; `stage00_20261017/delivery_manifest.json` | GPTR conditional priority; gnssFGO LC conditional reference; stop before Stage 01 |
 | 2026-10-17 | 01 | GPTR core built; 47 adapted numerical checks and 10 analytic convention checks passed; three fixed segment proposals; implementation/approximation limits recorded | `reports/01_method_feasibility.md`; `stage01_20261017/manifest_completed.json` | Complete feasibility study; GPTR with explicit adapters conditionally preferred; stop before Stage 02 |
+| 2026-10-17 | 02 | Three fixed real-log prototypes; 41 solves, 31 final configurations; synthetic/kinematic/dynamic/holdout/sensitivity evidence | `reports/02_trajectory_reconstruction.md`; `stage02_20261017/delivery_manifest.json` | Prototype completed with material acceleration/timing/rigidity limits; Stage 03 formal labels not ready |

@@ -2,6 +2,15 @@
 
 **Not authorized by initial scaffold.** Requires completed G0/G1 gates and separate user approval.
 
+**Current authorization (2026-10-17):** the user explicitly authorized Stage 02
+on `reconstruction-audit`, including real-observation adapters, focused builds,
+synthetic factor tests and the fixed A/B/C prototypes. Stage 01's numerical
+limitations must be monitored. Unknown physical extrinsics/delays may be tested
+as explicit assumptions with sensitivity analysis; the wording below about
+verified lever arms must not be interpreted as permission to invent measured
+values. No upstream/raw-data modification, full-log label production, neural
+training or Stage 03 is authorized.
+
 ## Goal
 
 Implement the selected **published** optimizer via adapters, not new solver internals. Produce p/v/R/omega and observation-supported acceleration/angular acceleration with transparent uncertainty and quality flags.
