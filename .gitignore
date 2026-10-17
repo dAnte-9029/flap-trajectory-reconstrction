@@ -1,0 +1,34 @@
+# Local sources and configs
+configs/paths.local.yaml
+.env
+.venv/
+**/__pycache__/
+.pytest_cache/
+*.py[cod]
+
+# Raw/log/video artifacts never belong in Git history
+runs/
+data/
+outputs/
+artifacts/
+*.ulg
+*.bag
+*.db3
+*.mcap
+*.zip
+*.pt
+*.pth
+*.parquet
+*.npz
+
+# C++ / ROS build outputs
+build/
+install/
+log/
+colcon_ws/
+CMakeFiles/
+CMakeCache.txt
+
+# Editors
+.vscode/
+.idea/

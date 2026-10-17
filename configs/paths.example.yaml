@@ -1,0 +1,10 @@
+# Copy to configs/paths.local.yaml (ignored by Git).
+# Set local ABSOLUTE paths only after checking actual mounts and git refs.
+ulog_root: null
+flap_system_identification_repo: null
+upstream_gptr_clone: null
+upstream_gnssfgo_clone: null
+# Explicitly set the authoritative manifest path; never auto-detect by mtime.
+flight_split_manifest: null
+# Optional existing derivative dataset for downstream integrator contract:
+model_dataset_manifest: null
