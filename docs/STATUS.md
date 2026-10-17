@@ -1,5 +1,22 @@
 # Project status
 
+## Stage 01 completed — synthetic feasibility with limits, 2026-10-17
+
+The user explicitly authorized Stage 01 and chose the `flap-recon` Conda environment. Its interrupted download was recovered and the core build/numerical work completed. [Method feasibility report](reports/01_method_feasibility.md) separates executed results, source analysis and scientific limitations. **Stage 02 is not authorized or executed.**
+
+- Reused both Stage 00 reports and existing final audit CSVs. No raw ULogs or model performance were read, and no September statistics were rerun.
+- Rechecked GPTR `2c0285a4f3141b131cc7b3aa77b3c6d979c0a2c2` and gnssFGO `16030fb6a24263a4b927d2ec5d1da266340ddb9b`, with upstream worktrees unchanged.
+- **Built and executed:** repository-local CMake target against the pinned GPTR numerical sources, using a documented ROS/PCL utility bridge. Conda GCC 15.3.0, CMake 3.31.8, Eigen 3.4.0, Ceres 2.2.0 CPU and Sophus source 1.24.6; exact 90-package closure recorded. No full ROS application or gnssFGO build was performed.
+- Reproduced wrong right-end alpha and near-knot snapping in `getStateAt`, and the nonstandard padded-tangent manifold convention. Tested `auditedQuery`, a true SO(3) manifold and explicit factor Jacobian conversion. Original API diagnostics remain separate from adapter checks.
+- Reproduced the 1 ms `PSI` cutoff: a synthetic acceleration difference across 2 ns was 0.0014695 m/s². A one-line **build-local header patch**, guarded by the original SHA, reduced that difference to 2.94e−9 m/s². External GPTR source stayed unchanged; this is an explicit adapted build, not unmodified upstream behavior.
+- Adapted C++ run: **47 PASS**, 21 measured interpolation/integration errors, 3 deliberately reproduced original-API issues, and 2 retained small-angle approximation limits; CTest **1/1 passed**. Quintic six-quantity errors ≤1.96e−14; IMU/prior local Jacobian errors ~5.83e−9/6.05e−8. Bias-only and joint-state synthetic Ceres solves passed. Independent midpoint integration exhibited second-order convergence.
+- **Remaining numerical limit:** upstream small-angle truncation is not machine-precision differentiation. A tested small-angle state Jacobian error was 8.74e−5 normalized; the auxiliary derivative branch has a ~1.89e−4 jump. A requirement for strict global differentiability or 1e−6 Jacobians needs further stable-expansion validation before use. The PSI patch does not fix this limit.
+- **Also executed:** 10/10 independent analytic convention checks in the new environment. Three fixed 16 s historical-train segment proposals plus 2 s context checked against existing Stage 00 coverage, boundary events and spectral-window evidence. A: good RTK/main IMU selected; B: good RTK/main IMU not selected; C: weak GNSS. Exact SHA/HRT intervals are in `configs/stage01_feasibility.json`.
+- Defined the async accel/gyro, NED gravity/bias, GNSS PVT covariance/time/lever-arm adaptation plan and IMU-point versus rigid-body/center-of-mass limitations. The GNSS Ceres factor and real-log calibration adapter are not implemented.
+- Final evidence: `runs/stage01_20261017/probe_{original,adapted}_final.csv`, `ctest_adapted.log`, `convention_checks_conda.json`, `prototype_segments.json`, `upstream_overlay.diff`, and `manifest_completed.json`. Initial blocked/earlier runs remain separately recorded. Reproduction: `experiments/stage01/README.md`; environment: `configs/environment.stage01.yml`. Large/third-party artifacts remain outside Git.
+
+Next-stage conditions: separately authorize Stage 02; preserve tested numerical conventions and address small-angle accuracy requirements, device calibration/bias, frames, physical reference points/lever arms, timing and GNSS covariance. Implement/test the GNSS Ceres adapter before A/B/C prototypes. GPTR is the conditional first candidate; gnssFGO remains a GNSS design reference. Synthetic success is not real-flight accuracy, posterior uncertainty calibration, formal-label acceptance or control readiness.
+
 ## Stage 00 completed — 2026-10-17
 
 Branch: `reconstruction-audit`. User authorized read-only observation auditing of **all September 2026 raw ULogs**, including historical test/excluded logs. No historical model test performance was read or used. No optimization, label generation, training, dependency installation or Stage 01 was executed.
@@ -18,15 +35,15 @@ Verified scope: recursively inspected QgcLogs across 17 September directory name
 - Phase support is valid in 90 logs; 89 have sufficient continuous 8 s spectral windows. Window wing-frequency P5/median/P95 is 3.173/3.867/4.429 Hz; main IMU provides about 26 samples/cycle and strong phase-linked components. This supports the fundamental, not arbitrary harmonics or physically exact acceleration.
 - 38 logs contain recorded attitude reset changes; logger dropouts, estimator/origin changes and time gaps are reported by raw hash and interval. Main sensor 0 is not always the selected EKF IMU. Lever arms, precise sensor noise, full delay chain and absolute heading remain unresolved.
 
-## Method decision
+## Stage 00 method decision (at closure)
 
 **CONDITIONAL first choice: GPTR**, pinned to `2c0285a4f3141b131cc7b3aa77b3c6d979c0a2c2`, for its direct inertial observation factors, explicit p/v/a and R/omega/alpha states and closed-form SO(3) derivatives. Reuse `GaussianProcess.hpp`, GP motion prior and IMU factor; add repository-local ULog/calibration/time and GNSS PVT adapters. This is an applicability decision, not demonstrated reconstruction accuracy.
 
 **CONDITIONAL alternative/reference: gnssFGO loose coupling**, pinned to `16030fb6a24263a4b927d2ec5d1da266340ddb9b`. Reuse GNSS PVT/lever-arm/time-association designs; the Full WNOJ implementation does have acceleration states. Continuous preintegration from the sparse logged deltas and tight coupling from missing per-satellite observations are blocked with current inputs. Numerical preintegration from calibrated sampled main IMU is a separate conditional possibility.
 
-Module-level license statements differ from root licenses; reviewed and documented, no upstream source copied into tracked files. Neither upstream was built or modified.
+Module-level license statements differ from root licenses; reviewed and documented, no upstream source copied into tracked files. Neither upstream was built or modified during Stage 00; the subsequently executed Stage 01 core builds and local adaptation are recorded above.
 
-## Evidence and checks
+## Stage 00 evidence and checks
 
 - [Observation audit and per-date results](reports/00_observation_audit.md)
 - [Paper/code comparison and next-stage modules](reports/00_method_applicability.md)
@@ -38,14 +55,15 @@ Module-level license statements differ from root licenses; reviewed and document
 - Focused tests: **11 passed**; Python compilation and scoped `git diff --check` passed. No full optimization, build or physical-accuracy validation was attempted.
 - Delivery index/hashes: `runs/stage00_20261017/delivery_manifest.json`. Large results remain ignored by Git. Exploratory/failed checks are retained separately and superseded by final outputs.
 
-## Unresolved conditions for a separately authorized next stage
+## Stage 00 next-stage conditions (historical)
 
 Choose fixed development-only prototype segments without model-test performance; pin their identities. Define device-specific calibration/bias, frame/gravity conventions, clock mapping/receiver delay and physical reference points/lever arms. Treat PX4 states as correlated priors/reference; verify candidate GNSS heading separately. Test continuous kinematic derivatives/Jacobians and downstream quadrature separately, then observation holdout, uncertainty sensitivity and measured dynamic retention. Preserve evaluation independence when fitting parameters.
 
-Stage 01 is **not authorized or started**. No formal reconstruction labels or control-readiness claims exist.
+At Stage 00 closure, Stage 01 was not authorized or started. Its subsequently authorized work is recorded above. No formal reconstruction labels or control-readiness claims exist.
 
 ## Verified work log
 
 | Date | Stage | Result | Evidence | Decision |
 |---|---|---|---|---|
 | 2026-10-17 | 00 | All 91 unique September ULogs audited from raw bytes | Reports above; `stage00_20261017/delivery_manifest.json` | GPTR conditional priority; gnssFGO LC conditional reference; stop before Stage 01 |
+| 2026-10-17 | 01 | GPTR core built; 47 adapted numerical checks and 10 analytic convention checks passed; three fixed segment proposals; implementation/approximation limits recorded | `reports/01_method_feasibility.md`; `stage01_20261017/manifest_completed.json` | Complete feasibility study; GPTR with explicit adapters conditionally preferred; stop before Stage 02 |

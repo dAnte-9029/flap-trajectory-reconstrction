@@ -1,0 +1,40 @@
+{
+  "stage": "01",
+  "gptr_root": "/home/zn/gptr",
+  "gptr_commit": "2c0285a4f3141b131cc7b3aa77b3c6d979c0a2c2",
+  "gnssfgo_root": "/home/zn/gnssFGO",
+  "gnssfgo_commit": "16030fb6a24263a4b927d2ec5d1da266340ddb9b",
+  "stage00_root": "runs/stage00_20261017",
+  "output_root": "runs/stage01_20261017",
+  "synthetic_only": true,
+  "representation": "SO3xR3",
+  "use_approx_drv": false,
+  "lie_epsilon": 0.001,
+  "synthetic_periodic_hz": 4.0,
+  "synthetic_knot_intervals_s": [0.1, 0.05, 0.02],
+  "prototype_status": "proposed_for_separately_authorized_stage02_not_executed",
+  "prototype_time_basis": "PX4 HRT seconds as recorded by Stage 00; NOT time since file start or UTC",
+  "prototype_segments": [
+    {
+      "id": "A_good_rtk_selected_main_imu",
+      "sha256": "1894725285badf0fbb07369e0f13cf92c8f213b636349d38c7280a2ee5af2e75",
+      "start_s": 101.704719,
+      "end_s": 117.704719,
+      "reason": "RTK fixed throughout audited valid airborne support; main IMU selected; two recorded wing-frequency windows; baseline adaptation case"
+    },
+    {
+      "id": "B_good_rtk_unselected_main_imu",
+      "sha256": "5abe5e80b02948c33d55cfa19837725934dbb0caa2132facd63e2129cf792952",
+      "start_s": 117.707089,
+      "end_s": 133.707089,
+      "reason": "RTK fixed throughout audited valid airborne support; high-rate main IMU never selected in traceable selection support; prohibit blindly importing EKF bias"
+    },
+    {
+      "id": "C_weak_gnss_continuous_imu",
+      "sha256": "3746db93c8eb02d5b94167d21d11701b5caaeffdd909b7f61a4c70b7519129d0",
+      "start_s": 94.456471,
+      "end_s": 110.456471,
+      "reason": "Only 2.188918/89.801744 seconds fixed in flight-level valid airborne PVT; continuous joint support and wing signal; diagnostic case, not assumed window-specific fix fraction"
+    }
+  ]
+}

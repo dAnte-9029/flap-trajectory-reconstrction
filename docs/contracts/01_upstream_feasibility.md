@@ -2,6 +2,16 @@
 
 **Not authorized by initial scaffold.** Run only after user explicitly approves Stage 01.
 
+**Current authorization (2026-10-17):** the user explicitly approved Stage 01 on
+`reconstruction-audit`, including a minimal local synthetic build and numerical
+checks. Stage 00 results must be reused without repeating raw-log statistics.
+This does not authorize Stage 02. The user subsequently chose to create the
+`flap-recon` Conda environment from `configs/environment.stage01.yml`. Recovery
+of its interrupted download and routine builds/tests within that environment
+are within the authorized Stage 01 work; no system-wide installation or upstream
+fork modification is authorized. The original missing-dependency stop is no
+longer a blocker once that environment is available.
+
 ## Goal
 
 Choose the minimum change needed to reuse an upstream published continuous-time trajectory estimator for the audited observations. Do not recreate the GP engine from scratch.

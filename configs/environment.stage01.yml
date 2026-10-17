@@ -1,0 +1,19 @@
+# GPTR SO(3)xR3 numerical probes only; not the full ROS application stack.
+# Source pins: GPTR 2c0285a4; Sophus source version 1.24.6; Ceres 2.2.0.
+# Conda's epoch prefix in Sophus "1!1.24.6" is intentional.
+# This is a constrained environment spec, not a platform-specific lockfile.
+name: flap-recon
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - cmake>=3.24,<4
+  - ninja
+  - cxx-compiler
+  - eigen=3.4.0
+  - ceres-solver=2.2.0=cpu*
+  - sophus=1!1.24.6
+  - fmt
+  - numpy=1.26
+  - scipy=1.11
