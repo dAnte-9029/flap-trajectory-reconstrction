@@ -1,0 +1,15 @@
+{
+  "stage":"02.6", "output":"runs/stage02_6_20261019", "source":"runs/stage02_4_20261019",
+  "groups":{"G0":"Original 6D PVT with one Huber(3)","G1":"Marginal position + conditional velocity, two separate Huber(3)","G2":"Same marginal position and Huber(3) as G1; conditional velocity omitted"},
+  "initialization":"Same retained-position piecewise-linear interpolation and its interval slope for p/v; nearest bracketing retained GNSS positions, endpoint interval extrapolation. No GNSS velocity values. Same retained gyro and EKF attitude interpolation as Stage02.4, zero a/alpha/bias. Frozen before new results.",
+  "knot_dt":0.05,"qt":10000,"qr":1000,"sigma_accel":1.5,"sigma_gyro":0.05,"bias_sigma_accel":0.5,"bias_sigma_gyro":0.02,"gnss_delay":0.11,"lever":[0,0,0],"huber_radius":3,
+  "inputs":"Unchanged Stage02.4 phase32 remaining IMU, GNSS, complete-wingbeat masks, calibration, phase pieces; no new periodic coefficients or physical restoration",
+  "solver":"Same sparse normal Cholesky, 2 threads, max400, function tolerance1e-8, gradient1e-10, parameter1e-9; no retuning or failure retries",
+  "primary_order":["A_G0","A_G1","A_G2","B_G0","B_G1","B_G2"],
+  "synthetic_gate":"SPD and Schur checks, whitening norm/combined Huber cost/state-gradient parity, finite-difference SO3/lever Jacobians, exact G1/G2 position factor equality; relative tolerances whitening1e-8, gradients1e-8, FD1e-5",
+  "initialization_sensitivity":"Only if A_G0 accel held RMSE differs from historical A_slow by >1% or target-grid R RMS exceeds .01rad: run exactly A_G1/A_G2 with original retained-GNSS-velocity initialization. Same two configurations, not best-of restarts. Otherwise omit.",
+  "maximum_primary_solves":6,"maximum_additional_solves":2,
+  "evaluation":"Native remaining IMU prediction and fixed-P addback ledger; vector/axis/train/held/whole-cycle/fractional quarters/tails; PVT marginal position and conditional velocity whitening; actual training position Huber weights; per-factor costs; bias/gravity/state and finite-difference curvature diagnostics; GNSS velocity residual versus nearby accel error association; 20/50/100/200ms increments on off-grid starts, classified by retained/held IMU cycle and proximity to GNSS. No physical-causation inference from residuals alone.",
+  "stop":"Stop B if A mathematics, input/position equality or usability checks fail. Preserve every attempted solve and failure. No full-label or Stage03 work.",
+  "interpretation":"G1/G2 isolates addition/removal of velocity information in this fixed optimization model. State-dependent position Huber weights may differ at different solutions; identical position loss functions at the same state, not frozen weights. G0/G1 changes robust objective. A/B development exposed, EKF initialization correlation and physical unknowns remain."
+}

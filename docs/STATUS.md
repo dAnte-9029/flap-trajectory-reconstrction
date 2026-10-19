@@ -1,5 +1,18 @@
 # Project status
 
+## Stage 02.6 completed — matched GNSS velocity ablation, negative improvement result, 2026-10-19
+
+[Chinese report](reports/02_6_gnss_velocity_ablation.md) records **6 fixed real solves**, A/B × G0/G1/G2, with unchanged separated IMU, complete-wingbeat masks, 50ms knots, q=.1, noise/bias priors, 110ms assumed GNSS delay and zero lever. All converged; 16.94s total solver time. No periodic physical recovery, new labels, training or Stage03 work.
+
+- **VERIFIED:** marginal-position / conditional-velocity covariance factors pass correlated-SPD, combined-Huber cost/gradient parity (~1e-15), SO(3)/nonzero-lever FD Jacobians (<6.84e-8), and exact same-state G1/G2 position factor/Huber checks. Saved4536 Jacobian elements. Separate Huber blocks in G1 are explicitly not equivalent to G0's joint Huber.
+- **VERIFIED:** all groups share byte-identical position-only initialized knots; retained-position slope independently agrees <6e-13. EKF attitude initialization correlation remains. A-G0 closely reproduces the historical result, so the preregistered optional traditional-initialization pair was not triggered. G0/G1 held accel changes only +.000924/−.003928m/s².
+- **VERIFIED:** removing only conditional velocity (G1→G2) worsens held accel **9.976→11.926 / 12.115→13.224m/s²**, +19.55%/+9.16%. ΔGP grows **47.223→89.932 / 98.716→126.824(m/s²)²**. All12 A held cycles and10/13 B cycles worsen; B's3 improvements retained. Training residual cancellation still fails to transfer to held cycles.
+- **VERIFIED:** held GNSS p worsens .05895→.11278 / .05133→.08191m; v .34641→.41783 / .41595→.43621m/s. Actual G1/G2 position factors never activate Huber downweighting. Same-time held a differs7.21/7.16m/s², versus training .68/.76; attitude/bias coupling remains. Larger held acceleration amplitude coexists with some reduced curvature; smoothness is not truth.
+- **SUPPORTED:** GNSS velocity acts as a stabilizing condition in this fixed model; evidence contradicts the proposed benefit from removing it. Its effect is large, so this is not evidence that velocity is irrelevant. **UNRESOLVED:** physical accuracy, unknown timing/extrinsics/rigidity, high-frequency attribution and global uniqueness.
+- Verified Stage02.4's409 and Stage02.5's174 inherited artifacts unchanged. B has79 context GNSS factors versus A80; a runner-count assertion and summary-only query error were fixed with logs retained, without rerunning any existing solve or changing parameters. Outputs: `runs/stage02_6_20261019/`; reproduction: `experiments/stage02_6/README.md`.
+
+**NO-GO for deleting GNSS velocity as an improvement under these fixed conditions; CONDITIONAL for continued bounded mechanism research. Stage03 remains NOT READY.** Next proposed single experiment (not executed/authorized here): fixed-G1 influence of retained IMU at held-wingbeat boundaries through WNOJ interpolation, with preregistered finite perturbation verification. No new architecture or q/delay search recommended from this result.
+
 ## Stage 02.5 completed — residual attribution; physical causes remain unresolved, 2026-10-19
 
 [Chinese diagnostic report](reports/02_5_residual_attribution.md) distinguishes **VERIFIED / SUPPORTED / UNRESOLVED** claims. Reused Stage02.4's 409 artifacts, exact A/B whole-wingbeat masks, saved main/sensitivity solutions and the existing query binary. **Zero new trajectory optimizations**, no label export, training or Stage03 work; no historical/upstream/PX4/raw edits.
