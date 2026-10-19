@@ -2,11 +2,21 @@
 
 All metrics must use fixed, fully specified input segments; report flight-wise distributions and explicit pooled vs equal-flight aggregation. A plot without quantitative validation is not a pass.
 
+## Full-observation branch evaluation (2026-10-19)
+
+The primary engineering evaluation of this offline task is **full-observation consistency**. Enable explicit `full_observation` mode; audit every native observation's validity, participation and exclusion reason, including historically held samples. Refit periodic templates using all valid observations. Preserve asynchronous measurement times and do not independently reweight correlated PX4 fused states.
+
+Report five distinct categories: `in_sample_observation_fit`, `held_out_observation_prediction` (auxiliary, explicitly not run when omitted), `kinematic_consistency`, `parameter_sensitivity`, and `independent_physical_validation` (unverified without independent truth). Historical whole-wingbeat prediction experiments remain valid evidence about their conditional-prediction setting; they are not the main reconstruction acceptance gate here.
+
+Compare GNSS antenna p/v with explicit lever and delay assumptions, gyro with body rate plus bias, and accelerometer with body-frame **specific force** plus bias and any applicable rigid-body lever effects. Never compare NED kinematic acceleration directly with accelerometer readings. A main-IMU reference point has zero IMU lever by definition; this does not identify the centre of mass or establish rigid mounting. Angular acceleration has no direct sensor truth here.
+
+Report native per-sample and per-axis physical residuals, vector RMSE/MAE/bias/95th percentile, receiver quality and time/mode cohorts, whitening assumptions, and actual robust weights/costs. For separated/recovered models distinguish raw-observation residuals from the derived projection targets used by optimization. Preserve context observations in the ledger and mark boundary support separately. Check off-grid derivatives, GP and phase boundaries and 20/50/100/200 ms integration with step refinement. A finite optimizer result or lower fitted residual alone is insufficient acceptance.
+
 ## V1 Observation agreement
 
 - Compare reconstructed p/v/R/omega with each **actually observed** source on its native measurement-time grid, accounting for attitude convention and lever arms.
 - Report signed/axis/vector residuals, missing/invalid percentage, time lag, GNSS fix class and normalized residuals when valid covariance exists.
-- Withhold independent observations/selected timestamps during a declared diagnostic and evaluate them only AFTER fitting; do not claim already-fused PX4 outputs are independent ground truth.
+- If a held-out diagnostic is declared, withhold its observations and evaluate them only AFTER fitting. Full-observation primary runs do not withhold otherwise valid samples. Do not claim already-fused PX4 outputs are independent ground truth.
 - If measurement errors/covariance are unknown, label any weighting as heuristic and run sensitivity analysis; do not invent standard deviations.
 
 ## V2 Kinematic consistency and integrator validity

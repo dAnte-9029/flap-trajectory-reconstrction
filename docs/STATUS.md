@@ -1,5 +1,17 @@
 # Project status
 
+## Full-observation continuous reconstruction v1 — new work branch, 2026-10-19
+
+[Chinese report](reports/full_observation_reconstruction_v1.md). Branch `feature/full-observation-reconstruction` starts at verified `b4f8acbef2fa8c3818a76983bb3a4147eaf8e190`; this is not Stage02.7. Primary engineering evaluation is full valid-observation consistency; held-out prediction is auxiliary; independent physical validation remains **unverified**. Historical stage outcomes below remain unchanged.
+
+- **VERIFIED engineering:** A/B full-observation prototypes and A-source complete ULog audit; one global continuous solve over 142.75s including context, 138.75s target (87.740047–226.490047 HRT). Direct GPTR and fixed-slow phase recovery use 14,276 accel +14,276 gyro +714 PVT observations each. Preflight/reset/ground/nonpositive-phase intervals remain excluded with native coverage ledgers, not stitched. All-valid periodic templates refitted; residual holdout flags rejected in C++. A/B historically held IMU/PVT reinclusion and actual factor counts verified.
+- **VERIFIED observation fit:** full-log target direct p/v/gyro/specific-force vector RMSE **0.06912m /0.43930m/s /0.23411rad/s /4.54018m/s²**; phase **0.06131 /0.44781 /0.23238 /6.18899**. Phase does not dominate. Native physical, whitened and actual projection-objective residuals, Huber weights, per-axis/time/mode/quality statistics and non-independent PX4 attitude differences retained.
+- **VERIFIED mathematics:** six main trajectories pass independent off-grid derivatives and GP/phase-boundary checks. Full-log derivative max <2.5e-6; refined midpoint 20/50/100/200ms closure p<3.5e-8m, v<6.4e-6m/s, R<4.7e-8rad, omega<2.3e-6rad/s. Coarse left-endpoint integration differences remain material and are reported separately. Native Python/C++ prediction parity <5.69e-14 and robust-objective accounting pass.
+- **CONDITIONAL physics:** fundamental/harmonics and maneuvers remain visible, but residuals/transients persist. Fixed A-only knot50→20ms changes a by3.87m/s² RMS; WNOJ×10 changes alpha by8.80rad/s² with nearly unchanged accel fit. Unknown delay, extrinsics/rigidity, effective weights and bias allocation remain. No calibrated posterior or independent physical truth; no promotion to Stage03 or training.
+- **VERIFIED delivery:** 27 scientific solves plus3 single-ULog CLI regression solves all converge (~146.45s summed Ceres time). Existing3,641 historical artifact hashes unchanged. Continuous knots/phase/query, dense trajectory, complete sample ledgers, standalone Chinese HTML atlas, configurations, execution logs and manifests under `runs/full_observation_reconstruction_v1/` (ignored by Git). Source and reproduction: `experiments/full_observation/`. No upstream/raw/dynamics repository edits.
+
+**READY for reproducible candidate-trajectory analysis; CONDITIONAL for research data construction with explicit assumptions; independent physical validation UNVERIFIED.** No new reserved-data evaluation, held-out selection, neural training, or formal label production.
+
 ## Stage 02.6 completed — matched GNSS velocity ablation, negative improvement result, 2026-10-19
 
 [Chinese report](reports/02_6_gnss_velocity_ablation.md) records **6 fixed real solves**, A/B × G0/G1/G2, with unchanged separated IMU, complete-wingbeat masks, 50ms knots, q=.1, noise/bias priors, 110ms assumed GNSS delay and zero lever. All converged; 16.94s total solver time. No periodic physical recovery, new labels, training or Stage03 work.

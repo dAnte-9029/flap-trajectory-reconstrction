@@ -1,0 +1,25 @@
+{
+  "mode": "full_observation",
+  "output": "runs/full_observation_reconstruction_v1",
+  "base_commit": "b4f8acbef2fa8c3818a76983bb3a4147eaf8e190",
+  "gptr_commit": "2c0285a4f3141b131cc7b3aa77b3c6d979c0a2c2",
+  "knot_dt": 0.05, "qt": 10000, "qr": 1000,
+  "sigma_accel": 1.5, "sigma_gyro": 0.05,
+  "bias_scale": 1.0, "gnss_delay": 0.11, "lever": [0,0,0],
+  "phase_scale": 32, "harmonics": 3, "context_s": 2,
+  "gnss_factor_group": 0,
+  "max_iterations": 400,
+  "sensitivities_A_only": {
+    "prior1": {"qt": 100000, "qr": 10000},
+    "delay0": {"gnss_delay": 0},
+    "lever": {"lever": [0.1,0.05,0.03]},
+    "phase16": {"phase_scale": 16},
+    "bias2": {"bias_scale": 2},
+    "knot20": {"knot_dt": 0.02}
+  },
+  "selection": "A/B fixed historical development segments, then A source ULog. Positive contiguous encoder and valid phase, airborne, native IMU/GNSS quality and reset checks. Two second context each side; no stitching or extrapolation across gaps.",
+  "weights": "Heuristic effective IMU sigmas; GNSS receiver diagonal proxies plus fixed floors .1/.1/.2m and .15m/s. Joint six-dimensional Huber(3), equivalent to Stage02.6 G0. No calibrated posterior.",
+  "reference": "Main IMU sensor point under rigid mounting assumption; GNSS zero lever and 110ms delay are uncalibrated hypotheses. IMU lever is zero by definition, not a calibrated COM location.",
+  "acceptance": "Primary in_sample_observation_fit; held_out_observation_prediction auxiliary and not run here; independent_physical_validation unverified. FD target 5e-3 SI with step refinement, continuity limit convergence, midpoint quadrature refinement. No sensor-accuracy pass threshold invented. No tuning on residual minima.",
+  "phase_recovery": "Cycle-balanced affine plus H1-H3 fitted to all valid native IMU. Subtract periodic terms only; fix all slow knots/biases during physical projection to slow-prediction plus template and original PVT. Projection targets are derived, not independent sensor observations. Final evaluate against original observations."
+}
