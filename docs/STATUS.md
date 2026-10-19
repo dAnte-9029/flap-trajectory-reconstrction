@@ -1,5 +1,19 @@
 # Project status
 
+## Stage 02.3-B completed — phase-aware joint reconstruction CONDITIONAL, 2026-10-19
+
+[Chinese report and figures](reports/02_3B_phase_aware_joint_reconstruction.md) record **13 preregistered real solves**, reusing the fixed GPTR core, Stage02 observation adapters and Stage02.3-A continuous encoder phase. No upstream/raw/PX4/dynamics edits, formal labels, neural training or Stage03 work.
+
+- Implemented fixed H1/H3 NED displacement and right-tangent SO(3) periodic motion over 50ms GPTR, deriving p/v/a/R/omega/alpha from the same composition. Ceres factors preserve asynchronous native IMU and GNSS PVT conventions. Synthetic variable-frequency/noncommuting-rotation/lever/covariance/bias checks pass; zero-periodic factor parity is below 1.58e-16. Exact phase export, serialized query replay and independent Python composition agree.
+- Baselines were **reoptimized with identical complete-wingbeat holdouts**, excluding both accel/gyro and gyro initialization on held cycles. A/B: 12/13 held cycles. EKF attitude initialization can indirectly expose related IMU; these remain conditional development results. No old point-held RMSE ranking.
+- H0→H3 held accel vector RMSE A/B **12.708→11.278 / 14.923→14.135 m/s²**; gyro **1.063→0.515 / 0.987→0.469 rad/s**. Gyro improves on all 25 held cycles; accel improves on 11/12 and 9/13, with substantial remaining train/held gaps. Fixed signal-only H3 regression still predicts accel better (7.392/6.951), but is not a six-DoF trajectory model.
+- Main gyro-y harmonics are restored; accel-z fundamental/third-harmonic content remains, but B acceleration overshoots and some axes/cycles worsen. GNSS position held RMSE remains ~0.080/0.067m; velocity ~0.636/0.549m/s. Kinematic derivative/integration checks pass at monitored precision, retaining a ~1e-6rad/s² local GP alpha boundary limitation and large 20ms left-end integration errors.
+- **Periodic allocation is not identified:** slow GP still carries substantial periodic acceleration; changing coefficients by 20% and compensating slow knots changes total acceleration only ~0.052/0.061m/s² RMS. H3 adds 36 parameters to the same 50ms baseline (7224→7260); reduced effective freedom is not demonstrated. Local restart is stable, which does not prove physical uniqueness.
+- A sensitivity: weaker q=1 prior worsens held accel to **23.875m/s²**; phase16 leaves held scores similar but changes position coefficients materially; assumed GNSS delay0 vs110ms changes p/a/R by ~0.842m/5.399m/s²/0.191rad RMS. Unknown extrinsics, timing, bias and local vibration remain scientific limitations. No parameter retuning followed these results.
+- Outputs: `runs/stage02_3B_20261019/`; code/query/reproduction: `experiments/stage02_3B/README.md`; frozen protocol: `configs/stage02_3B_joint.json`. All 13 solves converged; ~79.1s total solver time. Detailed negative results, hashes, masks, quality flags, coefficient exchange and sensitivity artifacts are preserved locally.
+
+**CONDITIONAL for further bounded research, not label acceptance.** Next authorization would need an explicit slow/periodic allocation convention that preserves nonperiodic maneuvers, stable complete-cycle acceleration prediction, timing/extrinsic evidence and independent observation/installation validation. Current a/alpha remain experimental candidates, not whole-body truth; no automatic next stage.
+
 ## Stage 02.3-A completed — continuous mechanical phase CONDITIONAL, 2026-10-19
 
 [Chinese report and plots](reports/02_3A_continuous_phase_reconstruction.md) document A/B encoder-constrained C2 phase curves with one fixed Hall reference offset. No six-DoF joint optimization, formal labels, network training or Stage03 work.
