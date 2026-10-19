@@ -1,0 +1,19 @@
+{
+  "stage": "02.4", "output": "runs/stage02_4_20261019",
+  "source": "runs/stage02_3B_20261019", "phase_source": "runs/phase_reconstruction_20261019",
+  "cycles": "runs/stage02_2_20261017/regression", "harmonics": 3,
+  "split": "exact Stage02.2 complete_cycle_mod5_eq2; both IMU withheld, unchanged GNSS mask",
+  "decomposition": "Reuse cycle-balanced fixed H3 least squares with train-only intercept and affine time trend; subtract ONLY six periodic terms. Residual y-minus-periodic is a sensor observation, not physical truth.",
+  "slow": {"knot_dt":0.05,"q":0.1,"sigma_accel":1.5,"sigma_gyro":0.05,"bias_sigma_accel":0.5,"bias_sigma_gyro":0.02,"gnss_delay":0.11,"lever":[0,0,0],"phase_scale":32},
+  "restoration": "Fix every slow knot and bias; fit 36 fixed displacement/right-tangent coefficients against forward-model sensor effect minus TRAIN-fitted periodic template at TRAIN native timestamps. Include original GNSS TRAIN PVT on composed trajectory. This is a deterministic projection, not an additional independent sensor likelihood. No free periodic nuisance or joint relaxation.",
+  "coefficient_sigma": {"position":"0.05/h^2 metres","rotation":"0.05/h radians"},
+  "separation_gate": "On complete TRAIN cycles, slow-prediction detrended H1-H3 coefficient norm divided by raw-observation norm must be below 0.2 for the two previously established repeatable channels accel-z and gyro-y, in BOTH A/B. All axes retained and reported. If not, preserve slow results and design the explicit soft phase projection constraint; do not claim physical separation or run unbounded fixes.",
+  "synthetic_gate": "Before real recovery, exact fixed-slow forward-model synthetic coefficient error <1e-5 in own units; coefficient Jacobian normalized error <1e-5. Variable phase frequency, noncommuting slow rotations, nonzero lever, gravity and bias. Also measure finite-H3 signal-separation approximation and nonperiodic transient preservation, without tuning to them.",
+  "primary_solves": ["A_slow", "B_slow", "A_restore", "B_restore"],
+  "sensitivity_A_only": [{"name":"phase16","phase_scale":16},{"name":"prior1","q":1.0},{"name":"delay0","gnss_delay":0.0},{"name":"lever","lever":[0.1,0.05,0.03]}],
+  "restart": "One A coefficient-only restart, initialization 0.1 prior sigma times sin(index+1), same fixed slow",
+  "maximum_real_solves": 13,
+  "no_parameter_search": true,
+  "metrics": "same vector/per-axis/whole-cycle RMSE, GNSS position/velocity; training and held phase projection, sensor-only addback versus physical forward prediction separately; peaks, nonperiodic residual, harmonics and native spectra; independent differences/integration, GP and phase knot limits; coefficient Jacobian SVD conditional on fixed slow (not physical observability)",
+  "validity": "A/B development-exposed; encoder exogenous allowed; EKF attitude init may indirectly contain held IMU. Main IMU point under rigid mounting hypothesis, not COM or structural-vibration identification. No formal labels, no Stage03."
+}

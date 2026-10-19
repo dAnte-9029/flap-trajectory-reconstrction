@@ -1,5 +1,20 @@
 # Project status
 
+## Stage 02.4 completed — Qian-inspired separation CONDITIONAL, 2026-10-19
+
+[Chinese report](reports/02_4_qian_style_separation.md) records train-only sensor decomposition, slow GPTR estimation and fixed-slow physical recovery. The Qian paper's Sec II/III, Fig.4 and full-state restoration experiments were reviewed against pinned public sources. This is an offline extension, not a claim to reproduce the author's complete GPR/aerodynamic internal model.
+
+- Reused A/B encoder phase, exact complete-wingbeat masks and saved H0/H3 results; inherited 303 artifacts remain hash-identical. Frozen H3 cycle-balanced regression subtracts only periodic terms, preserving the affine trend. Held-IMU poisoning leaves fitted regression unchanged. No axes or difficult cycles removed.
+- Completed **13 real solves plus 2 synthetic recoveries**. Exact conditional synthetic coefficient recovery is below 2.3e-14 in native units; the actual fixed sensor-template approximation remains nonzero even without noise. All real solves converged, ~18.94s solver time. No upstream/raw/PX4/dynamics changes or broad parameter search.
+- Slow GPTR primary-channel training phase projection falls to **1.86%/1.75% (A/B accel-z), 4.42%/1.63% (gyro-y)**. Held accel-z projection also drops substantially, but is not zero. Every slow knot and bias is fixed exactly during 36-coefficient physical recovery; fixed-slow restart and coefficient Jacobians pass. This is a conditional allocation convention, not physical identifiability or proof of lower overall effective degrees of freedom.
+- H3 → new physical trajectory held accel vector RMSE: **11.278→10.148 / 14.135→12.054 m/s²** (about 10%/15% better). Gyro **0.515→0.490 / 0.469→0.472 rad/s** (A improves, B slightly worsens). Accel improves on 7/12 and 12/13 held cycles; negative axes/cycles retained. GNSS held p/v becomes ~0.055/0.589 and 0.045/0.545; training velocity residuals worsen.
+- Sensor addback is explicitly separate from physical recovery: addback held accel remains 9.975/12.119, and physical-minus-addback is ~2.2m/s². Thus remaining GP prediction already accounts for most large errors. Weak prior q=1 worsens A held accel to **20.626**. Fixed sensor H3 and fixed motion H3 are not equivalent under changing frequency and SO(3) coupling.
+- Dominant fundamental/gyro low-order harmonics remain; periodic displacement/rotation peaks are ~2.4cm/1.8deg, not independently measured truth. Some weak harmonics and nonperiodic peaks still over/undershoot. Derivative, GP/phase boundary and independent integral checks pass at monitored precision; 20ms left-end integration still produces large errors.
+- Unknown GNSS delay/extrinsics, phase acceleration and rigid mounting remain material: delay0 changes A p/a/R by ~0.833m/2.759m/s²/0.080rad RMS despite similar scores. Local vibration versus rigid motion remains unresolved. No calibrated posterior or B sensitivity envelope is claimed.
+- Outputs: `runs/stage02_4_20261019/`; frozen config: `configs/stage02_4_separation.json`; code/query/reproduction: `experiments/stage02_4/README.md`. Manifest, full native predictions, all-axis/whole-cycle scores, spectra/harmonics, error attribution, negative results and validity limitations are retained locally.
+
+**CONDITIONAL for bounded research; Stage03 formal-label production remains NOT READY.** Remaining prediction overfitting, physical template-to-motion approximation, timing/mounting validation and an observation-supported acceleration/discrete-interface target need resolution. No formal labels, neural training or automatic next-stage work.
+
 ## Stage 02.3-B completed — phase-aware joint reconstruction CONDITIONAL, 2026-10-19
 
 [Chinese report and figures](reports/02_3B_phase_aware_joint_reconstruction.md) record **13 preregistered real solves**, reusing the fixed GPTR core, Stage02 observation adapters and Stage02.3-A continuous encoder phase. No upstream/raw/PX4/dynamics edits, formal labels, neural training or Stage03 work.
