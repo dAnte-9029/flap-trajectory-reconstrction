@@ -1,5 +1,20 @@
 # Project status
 
+## Stage 02.5 completed — residual attribution; physical causes remain unresolved, 2026-10-19
+
+[Chinese diagnostic report](reports/02_5_residual_attribution.md) distinguishes **VERIFIED / SUPPORTED / UNRESOLVED** claims. Reused Stage02.4's 409 artifacts, exact A/B whole-wingbeat masks, saved main/sensitivity solutions and the existing query binary. **Zero new trajectory optimizations**, no label export, training or Stage03 work; no historical/upstream/PX4/raw edits.
+
+- **VERIFIED:** native-time ledger `Y-y=(T+P-y)+(S-T)+(Y-S-P)` closes within 5.33e-15. Every signed cross term is retained at vector/axis/cycle/1s/4s levels. A/B held accel MSE = **52.299/48.050** (simple model) + **47.208/98.809** (net replacement by slow GP) + **3.479/-1.556** (net physical restoration). These are prediction differences, not causal noise shares.
+- **VERIFIED:** e1/e2 normalized inner product changes from **-0.797/-0.760 on train to -0.024/+0.020 on held**. Slow replacement worsens accel prediction on 12/12 and 12/13 held cycles; gyro-z improves. B's larger error is mainly a larger GP replacement penalty, not worse fixed periodic regression.
+- **VERIFIED:** errors are not confined to a few spikes; removing the largest 5% descriptively still leaves **8.917/10.431m/s²**. Held fixed H1-H3 residual projection explains only ~2.6%/7.2% of total accel MSE. Full/gapped native Lomb spectra, sampling windows and phase/time plots show broad accel residuals, slower erroneous GP excursions and much slower gyro-z structure. No vibration or noise-floor identification claim.
+- **VERIFIED:** 18 native stream queries reproduce saved predictions within 9.09e-13 and whitening within 5.90e-12; full-context factor cost reconstruction agrees within old six-digit export rounding. Actual train Huber downweighting is ~20%/21% for accel and 39%/38% for gyro. Held hypothetical downweighting is explicitly not actual optimization weight.
+- **SUPPORTED:** conditional overfitting and constraint/model tension coexist. A q=.1→1 changes slow accel train/held RMSE **4.223/9.975→4.195/20.677**. Delay0 leaves fitted IMU predictions close but changes held S by **6.138m/s² RMS**, with attitude/bias compensation. The unique causal roles of GNSS, priors and observation response remain **UNRESOLVED**.
+- **VERIFIED:** 18 matching firmware source snapshots were checked. A frozen read-only nominal 2.5ms centred/trailing averaging probe changes held accel RMSE by <0.017m/s² on fixed curves; this does not calibrate timing or exclude aliasing/hardware delay. No reoptimization or preferred-window selection.
+- **VERIFIED:** saved-curve 20/50/100/200ms increments were compared at off-grid starts. Duration-normalized acceleration differences remain **6.28→1.39m/s²** for q and **2.74→1.10m/s²** for delay across 20→200ms. Longer increments improve some sensitivity/interface behavior, not physical truth or guaranteed dynamic retention. Sensitivity magnitudes are A-only, not a B confidence interval.
+- Outputs: `runs/stage02_5_20261019/`; reproduction: `experiments/stage02_5/README.md`; configs: `configs/stage02_5_diagnostics.json`, `configs/stage02_5_window_probe.json`. Manifest, sample ledger, signed cross terms, all-axis/cycle spectra, weights, coupling and uncertainty limits retained locally.
+
+**SUPPORTED next research recommendation (not executed):** one matched mechanism test isolating GNSS velocity information in missing-wingbeat prediction, with fixed phase/prior/calibration/masks and consistent position/robust weighting. This is preferable to an unbounded parameter search. Physical mounting/timing/independent-motion evidence remains necessary; **Stage03 formal labels remain NOT READY**.
+
 ## Stage 02.4 completed — Qian-inspired separation CONDITIONAL, 2026-10-19
 
 [Chinese report](reports/02_4_qian_style_separation.md) records train-only sensor decomposition, slow GPTR estimation and fixed-slow physical recovery. The Qian paper's Sec II/III, Fig.4 and full-state restoration experiments were reviewed against pinned public sources. This is an offline extension, not a claim to reproduce the author's complete GPR/aerodynamic internal model.

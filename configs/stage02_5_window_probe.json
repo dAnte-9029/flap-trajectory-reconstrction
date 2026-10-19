@@ -1,0 +1,9 @@
+{
+  "purpose": "Read-only single-factor check of the instantaneous-observation approximation on fixed Stage02.4 full trajectories",
+  "evidence": "Pinned PX4Accelerometer/PX4Gyroscope updateFIFO trapezoidal average; prior audited N=5 and raw rate approx 2kHz. Effective sample timestamp/filter latency remains unknown.",
+  "hypothesis": "A nominal 2.5ms averaging operator alone may materially alter predicted held IMU; test magnitude without changing trajectories or selecting latency.",
+  "fixed": "A/B saved full trajectories, phase, bias, masks, calibration, GNSS, all parameters",
+  "changed": "Only read-only measurement forward operator: instantaneous versus 5-interval trapezoid with 0.5ms spacing, either centred or ending at logged timestamp",
+  "evaluation": "Native same-mask train/held vector and axis RMSE; prediction-change RMS and max; no optimization, no selection of preferred operator. Large changes support revisiting operator; small changes only bound these fixed-curve nominal windows, not unknown hardware delay/aliasing.",
+  "not_claimed": "Exact driver/FIFO replay, hardware calibration, noise identification or a lower bound on achievable reconstruction error"
+}

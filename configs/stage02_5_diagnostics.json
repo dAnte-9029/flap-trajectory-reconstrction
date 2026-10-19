@@ -1,0 +1,26 @@
+{
+  "stage": "02.5",
+  "output": "runs/stage02_5_20261019",
+  "source": "runs/stage02_4_20261019",
+  "segments": ["A", "B"],
+  "new_optimizations": 0,
+  "identity": "Y-y = e1+e2+e3; e1=T+P-y; e2=S-T; e3=Y-S-P; same native timestamps, masks and fixed bias convention",
+  "identity_absolute_tolerance": 1e-10,
+  "aggregation": "sample-weighted vector/per-axis mean square plus all 2*dot cross terms; fit and complete-wingbeat held separately; each cycle, 1s bins, four 4s windows; no RMSE addition",
+  "outliers": "vector norm quantiles, top 1/5/10 percent SSE shares, max cycle and max 1s share, trimmed RMSE descriptive only",
+  "phase": "H1-H3 with intercept and affine time; fit residual projection on training cycles only and test held cycles; held-only projection descriptive not refit trajectory; per 4s window all-native phase coefficients",
+  "spectrum": "Lomb-Scargle original timestamps, full native streams and separate held timestamps without stitching; 0.125 to 45Hz step .0625; spectral-window diagnostic; no calibrated PSD or physical noise attribution; bands .125-2,2-6,6-10,10-16,16-30,30-45",
+  "missing_interval": "distance to nearest actual retained same-sensor sample and held-cycle fractional quarters; native first differences only on adjacent samples <=20ms; e2 amplitude and S/remaining roughness",
+  "slow_cases": ["A", "B", "A_prior1", "A_delay0", "A_lever", "A_phase16"],
+  "readonly_evaluation": "reuse saved Stage02.3B query binary for native full-context states; exact whitening from saved covariance; Huber rho(s), rho'(s); reproduce saved rounded group costs and full solver cost with bias priors; no solve",
+  "coupling": "Sacc=R^T a -R^T g +ba; saved alternative minus base decomposed exactly into Ralt^T(aalt-abase), (Ralt^T-Rbase^T)(abase-g), bias difference; diagnostic allocation is order-dependent, not causes",
+  "intervals_s": [0.02,0.05,0.1,0.2],
+  "query_starts": "core start + .01317 then .03713 s, stop before end-.2; exact saved curve queries; slow and complete states; delta p,delta v, relative SO3,delta omega, acceleration position moment; divide increments by duration separately",
+  "existing_sensitivity": "A q .1 versus1,delay .11 versus0, lever and phase16; no parameter selection; do not generalize A envelope to B",
+  "hypotheses": [
+    "Poor conditional interpolation: S fits remaining on train more closely than T but predicts held worse; weakening prior amplifies this and gap excursions.",
+    "Constraint/model tension: substantial train residual and Huber downweighting coexist with GNSS fit and prior costs; this supports tension but cannot assign causation without controlled ablation.",
+    "Sensor dynamics/vibration versus rigid motion: phase/frequency coherence and forward fit do not uniquely distinguish; remains unresolved without timing/geometry/independent observation."
+  ],
+  "limits": "Development A/B; EKF initialization may be correlated; ledger not causal decomposition; no noise-floor claim, posterior, labels or Stage03"
+}
