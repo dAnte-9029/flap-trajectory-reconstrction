@@ -1,5 +1,20 @@
 # Project status
 
+## Stage 02.3-A completed — continuous mechanical phase CONDITIONAL, 2026-10-19
+
+[Chinese report and plots](reports/02_3A_continuous_phase_reconstruction.md) document A/B encoder-constrained C2 phase curves with one fixed Hall reference offset. No six-DoF joint optimization, formal labels, network training or Stage03 work.
+
+- Verified both original ULog SHA/FLAP_RATIO values and ten pinned firmware source snapshots, including WingPhaseMath. Encoder increments match modulo raw position, all 4000 samples are valid/contiguous/positive, and alpha=0.2 frequency replay agrees within 1.15e-6 Hz. Same-source frequency is a diagnostic, not a second likelihood.
+- Reused SciPy cubic smoothing splines with three preregistered strengths. Sparse count holdouts select a common 32 Hz scale (a parameterization, not a calibrated bandwidth); lambda approximately 6.119e-8 s^3. Sparse A/B RMSE **11.825/11.443 counts**, versus linear **23.565/23.009**; separate four 60 ms block holdouts **73.227/68.114**, versus linear **194.646/174.062**. No selection using IMU or block scores.
+- Serialized one selected phi/phi_dot/phi_ddot curve per segment, checked exact piecewise monotonicity, C2 limits, finite differences, numerical integration, and conservative validity flags. Near-grid midpoint error plateaus were retained and examined with preregistered off-grid checks; independent adaptive closure is below 3.34e-12. Five focused check groups pass.
+- Hall reference steps never enter fitted motion; encoder-supported frequency harmonics are retained, including roughly 97% third-harmonic amplitude. Full target interval-average frequency RMSE is **0.0213/0.0205 Hz**. Absolute zero and actual sensor latency remain uncalibrated; phase acceleration remains low-confidence and changes materially under smoothing/timestamp scenarios.
+- Exactly reused both Stage02.2 cycle splits and fixed H3 code. Dispersed-cycle accel vector RMSE changes A/B **7.392→7.232 / 6.951→6.932 m/s²**, gyro **0.4410→0.4250 / 0.4392→0.4363 rad/s**. B last-eight-cycle gyro slightly worsens **0.4451→0.4459**. These are development sensor predictions, not proof of improved 6-DoF physical trajectories.
+- Outputs: `runs/phase_reconstruction_20261019/`; query/reproduction: `experiments/stage02_3A/README.md`. Mechanical cycle phase is not wing-joint angle. **CONDITIONAL for a separately authorized phase-aware prototype; no physical acceleration/label promotion.**
+
+## Phase-reset visual diagnosis — 2026-10-19
+
+[Chinese diagnostic and figures](reports/02_2_phase_jump_diagnostics.md) reuse the frozen A/B 20 s contexts only. Across 157 resets, 139 corrections are below 1 degree and 18 cluster at approximately 11.4–12.2 degrees; the large corrections form opposite-sign pairs, leaving temporary phase-offset plateaus. Unwrapping alone retains up to 3.39 Hz first-difference artifacts relative to same-source encoder increments. This is evidence for explicitly handling phase-reference resets before differentiation, not a calibrated continuous phase or identification of Hall-trigger faults. No observations/trajectories were replaced, no new optimization or Stage03 work was performed. Plots, event CSVs and provenance: `runs/phase_jump_20261019/`.
+
 ## Stage 02.2 completed — phase-aware feasibility CONDITIONAL, 2026-10-17
 
 [Chinese phase-aware feasibility report](reports/02_2_phase_aware_reconstruction.md) records real complete-cycle holdouts, reference-code review and synthetic kinematic checks. **CONDITIONAL for a further bounded phase-consistent prototype; NOT READY for Stage03 or whole-body truth labels. No real phase joint optimization, label production or neural training was performed.**

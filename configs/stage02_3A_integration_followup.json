@@ -1,0 +1,5 @@
+{
+  "reason": "Initial per-regime strict monotonic refinement assertion failed: near-native-grid midpoint integration of piecewise-linear acceleration has microsecond kink-location plateaus (~5e-7 to 2.2e-6 rad/s). Keep original numerical evidence; do not alter models.",
+  "method": "For the same four regimes shift start by +3.17ms, end by -1.43ms, use fixed 23/91/367/1471 midpoint subintervals; no fitted parameter changes.",
+  "acceptance": "Fine integration max velocity error <1e-4 rad/s and phase error <1e-5 rad; fine vs coarse reduction for shifted intervals; original near-grid error plateaus allowed below 1e-5 rad/s; independent quadrature remains <1e-7."
+}
